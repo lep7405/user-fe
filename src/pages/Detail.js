@@ -135,9 +135,17 @@ function Detail() {
     <div>
       <Header />
       <div>
-        {data.services ? (
-          
-        ) : null}
+      {data.services ? (
+          <BookFormModal
+            openProp={[isBookingFormOpen, setIsBookingFormOpen]}
+            serviceProps={data.services.map((item) => ({ ...item, amount: 0 }))}
+            setServicePrice={setServicePrice}
+            totalPrice={totalPrice}
+            countCustomer={countCustomer}
+            rootProps={[rootState, setRootState]}
+            setIsConfirmed={setIsConfirmed}
+          />
+        ) : <div>hihihi</div>}
         <NotiModal
           openProp={[isNotiModalOpen, setIsNotiModalOpen]}
           state={false}
