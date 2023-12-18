@@ -12,6 +12,7 @@ import { useParams } from "react-router-dom";
 
 import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
 import { toast } from "react-toastify";
+import Feedback from "../components/Detail/Information/FeedBack";
 
 const defaultState = {
   customer: {
@@ -126,7 +127,7 @@ function Detail() {
   const x4cmt = [...Array(4)].map((e, i) => (
     <div className="pr-24">
       {data.rates && data.rates.length
-        ? data.rates.map((item) => <Feedback detail={item} />)
+        ? data.rates.map((item) => <FeedbacK detail={item} />)
         : null}
     </div>
   ));
