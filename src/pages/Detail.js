@@ -50,7 +50,7 @@ function Detail() {
   const [isNotiModalOpen, setIsNotiModalOpen] = useState(false);
 
   /* State for confirm book homestay */
-  
+
 
   /* Query data from BE */
   const [data, setData] = useState([]);
@@ -69,14 +69,13 @@ function Detail() {
 
 
         const discountId = response.content.homestay.discountId;
-        if(discountId)
-        {
+        if (discountId) {
           const { data: response2 } = await axios.get(
             'http://localhost:8000/admins/discounts/' + discountId
           )
           setDiscount(response2.content.value)
         }
-        
+
       } catch (error) {
         toast(error.message, { type: toast.TYPE.ERROR });
       }
@@ -136,7 +135,7 @@ function Detail() {
     <div>
       <Header />
       <div>
-      {data.services ? (
+        {data.services ? (
           <BookFormModal
             openProp={[isBookingFormOpen, setIsBookingFormOpen]}
             serviceProps={data.services.map((item) => ({ ...item, amount: 0 }))}
@@ -233,6 +232,17 @@ function Detail() {
             serviceRate={serviceRate}
             accuracyRate={accuracyRate}
           />
+           <div className="grid grid-cols-2">{x4cmt}</div>
+          <p className="flex flex-row text-2xl font-bold ml-3 mt-4"> Rating </p>
+
+
+          <div className="grid grid-cols-2 mt-2">
+            <Rating id={data.id} msg={'cleanRate'} />
+            <Rating id={data.id} msg={'serviceRate'} />
+            <Rating id={data.id} msg={'valueRate'} />
+            <Rating id={data.id} msg={'accuracyRate'} />
+          </div>
+
 
           <div className="grid grid-cols-2">{x4cmt}</div>
         </div>
