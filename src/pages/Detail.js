@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
 import { toast } from "react-toastify";
 import Feedback from "../components/Detail/Information/FeedBack";
+import BookingCard from "../components/Detail/BookingFormCard";
 
 const defaultState = {
   customer: {
@@ -215,7 +216,16 @@ function Detail() {
           </div>
 
           <div className="col-start-4 col-span-2 my-8 ml-10">
-            <
+          <BookingCard
+              rootProps={[rootState, setRootState]}
+              formProp={[isBookingFormOpen, setIsBookingFormOpen]}
+              homestayPrice={data.price}
+              discountProps={[discount, setDiscount]}
+              bill={bill}
+              servicePriceProps={servicePrice}
+              totalPriceProps={[totalPrice, setTotalPrice]}
+              countCustomerProps={[countCustomer, setCountCustomer]}
+            />
           </div>
         </div>
 
