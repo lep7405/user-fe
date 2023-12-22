@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {useNavigate } from 'react-router-dom';
 import {
     Button,
     TextField,
@@ -12,28 +11,23 @@ import {
     Container,
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { useEffect } from 'react';
-
-import { Link as LinkDom } from 'react-router-dom';
-import { loginAction } from '../../redux/authSlice';
-
-export default function Login() {
+import { Link as LinkDom ,useNavigate} from 'react-router-dom';
+import { registerAction } from '../../redux/authSlice';
+export default function Register() {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
+    const navigate=useNavigate()
     const [inputs, setInputs] = React.useState({
+        name: '',
         email: '',
         password: '',
     });
 
-
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log(inputs)
-        dispatch(loginAction(inputs))
-        navigate('/')
+        dispatch(registerAction(inputs))
+        navigate('/login')
     };
-
-
     return (
         <Container component="main" maxWidth="xs">
             <Box
@@ -45,11 +39,22 @@ export default function Login() {
                 }}
             >
                 <Typography component="h1" variant="h5">
-                    Welcome to Jade Hill Homestays
+                    Welcome to Jade Hills Homestays
                 </Typography>
-
                 <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                     <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <TextField
+                                required
+                                fullWidth
+                                label="Name"
+                                autoFocus
+                                value={inputs.name}
+                                onChange={(e) =>
+                                    setInputs({ ...inputs, name: e.target.value })
+                                }
+                            />
+                        </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 required
@@ -88,18 +93,18 @@ export default function Login() {
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
                     >
-                        Login
+                        Register
                     </Button>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
-                            <Link component={LinkDom} to="/register" variant="body2">
-                            {"Don't have an account? Create one now"}
+                            <Link component={LinkDom} to="/login" variant="body2">
+                                Already have an account? Login
                             </Link>
                         </Grid>
                     </Grid>
                 </Box>
             </Box>
-            {/* <Copyright sx={{ mt: 8, mb: 4 }} /> */}
+            {/* <Copyright sx={{ mt: 5 }} /> */}
         </Container>
     );
 }

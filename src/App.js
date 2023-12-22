@@ -1,25 +1,31 @@
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom"
-import React from "react"
+// App.js
+import React from "react";
 import "react-modern-calendar-datepicker/lib/DatePicker.css";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-
+import { Routes, Route } from "react-router-dom";
 import Detail from "./pages/Detail";
 import Homepage from "./pages/Homepage";
 import Homestays from "./pages/Homestays";
+import Register from "./components/homepage/Register";
+import Login from "./components/homepage/Login";
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
+import BillDetail from "./pages/BillDetail";
+library.add(faStar);
 
 function App() {
   return (
     <div>
-      <BrowserRouter>
-        <Switch>
-          <Route path="/homepage" component={Homepage} />
-          <Route path="/homestay" component={Homestays} />
-          <Route path="/detail/:id" component={Detail} />
-          <Redirect to="/homepage" />
-        </Switch>
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/homestay" element={<Homestays />} />
+        <Route path="/detail/:id" element={<Detail />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+        <Route path='/billdetail' element={<BillDetail />} />
+      </Routes>
 
-      </BrowserRouter>
       <ToastContainer
         pauseOnHover={false}
         pauseOnFocusLoss={false}
