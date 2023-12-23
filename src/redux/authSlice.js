@@ -37,7 +37,7 @@ export const getMeAction = createAsyncThunk(
     'authen/getMe',
     async (params, { rejectWithValue }) => {
         try {
-            const response = await axios.get(`users/getme`);
+            const response = await axiosClient.get(`http://localhost:8000/users/get/user`);
             console.log(response.data)
             return response.data;
         } catch (error) {
@@ -51,7 +51,7 @@ export const logOutAction = createAsyncThunk(
     'authen/logout',
     async (params, { rejectWithValue }) => {
         try {
-            const response = await axiosClient.post(`http://localhost:8000/auth/logout`,params);
+            const response = await axiosClient.post(`http://localhost:8000/auth/logout`, params);
             console.log(response)
         } catch (error) {
             return rejectWithValue(
@@ -66,7 +66,7 @@ const authenSlice = createSlice({
         userData: {
             email: null,
             userId: null,
-            name:null,
+            name: null,
         },
         accessToken: null,
         isLogin: false,
@@ -96,6 +96,7 @@ const authenSlice = createSlice({
                 state.userData.userId = action.payload.content._id;
                 state.userData.name = action.payload.content.name;
                 localStorage.setItem('AccessToken', action.payload.content.token);
+                localStorage.setItem('UserId', action.payload.content._id);
             })
             .addCase(loginAction.rejected, (state, action) => {
                 state.isLogin = false;
@@ -109,27 +110,23 @@ const authenSlice = createSlice({
                 state.userData.email = null;
                 state.userData.userId = null;
                 localStorage.removeItem('AccessToken');
+                localStorage.removeItem('UserId');
             })
             .addCase(logOutAction.rejected, (state, action) => {
 
             })
             .addCase(getMeAction.pending, (state) => {
-                state.isGetMe = true;
-                state.getMeMsg = null;
+
 
             })
             .addCase(getMeAction.fulfilled, (state, action) => {
-                state.isGetMe = false;
-                state.getMeMsg = null;
-                state.userData = action.payload.data;
-                state.isAuth = true;
-
+                state.isLogin = true;
+                state.userData.email = action.payload.user.email;
+                state.userData.userId = action.payload.user._id;
+                state.userData.name = action.payload.user.name;
             })
             .addCase(getMeAction.rejected, (state, action) => {
-                state.isGetMe = false;
-                state.getMeMsg = action.payload?.message || 'Error occurred';
-                state.isAuth = false;
-                state.userData = null;
+
 
             })
     },

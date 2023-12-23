@@ -1,45 +1,59 @@
 import Footer from "../components/Shared/Footer";
 import Description from "../components/Detail/Information/Description";
 import AmenitiesAndServices from "../components/Detail/Information/AmenitiesAndServices";
-
+import Rates from "../components/Detail/Information/Rates";
+import Feedback from "../components/Detail/Information/Feedback";
+import BookFormModal from "../components/Detail/BookFormModal";
+import PictureContainer from "../components/Detail/PictureContainer/PictureContainer";
+import BookingCard from "../components/Detail/BookingCard";
 import NotiModal from "../components/Detail/NotiModal";
 import Header from "../components/Shared/Header";
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 
 import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
 import { toast } from "react-toastify";
-import Feedback from "../components/Detail/Information/FeedBack";
-import BookingCard from "../components/Detail/BookingFormCard";
+import Rating from "../components/Detail/Information/Rating";
+import Comment from "../components/Detail/Information/Comment";
+import { GetBillAction } from "../redux/billSlice";
+import { getCommentAction, getRatingAction, selectComment, selectDetail } from "../redux/detailSlice";
+import { getMeAction, selectUserData } from "../redux/authSlice";
+import axiosClient from "../helpers/axios.helper";
 
-const defaultState = {
-  customer: {
-    name: "",
-    identification: "",
-    email: "",
-    phoneNumber: "",
-    age: 20,
-  },
-  customerTogether: [],
-  _id: "",
-  checkinDate: "",
-  checkoutDate: "",
-  status: 2,
-  servicesPerBill: [],
-};
 
 function Detail() {
+  const dataa = useSelector(selectUserData)
+  const defaultState = {
+    customer: {
+      name: "",
+      identification: "",
+      email:dataa.email,
+      phoneNumber: "",
+      age: 20,
+    },
+    customerTogether: [],
+    _id: "",
+    checkinDate: "",
+    checkoutDate: "",
+    status: 2,
+    servicesPerBill: [],
+  };
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  
+  const commentt=useSelector(selectComment)
   const { id } = useParams();
   const homestayId = useSelector((state) => state.homestayIdReducer);
+  console.log(homestayId)
   const filter = useSelector((state) => state.dayReducer);
 
   /* Root State, for query data from BE */
   const [rootState, setRootState] = useState({
     ...defaultState,
-    _id: homestayId,
+    _id: id,
     checkinDate: filter.checkinDate || new Date(),
     checkoutDate: filter.checkoutDate || new Date(),
   });
@@ -51,7 +65,34 @@ function Detail() {
   const [isNotiModalOpen, setIsNotiModalOpen] = useState(false);
 
   /* State for confirm book homestay */
+  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [discount, setDiscount] = useState(0);
+  useEffect(() => {
+    if (isConfirmed) {
+      setIsConfirmed(false);
+      console.log(rootState)
+      toast("Đang chờ...", { type: toast.TYPE.INFO });
+      axiosClient({
+        method: "POST",
+        url: "http://localhost:8000/users/create/billsAuthenticated",
+        data: rootState,
+      })
+        .then(async(response) => {
+          console.log(response)
+          toast("Thành công", { type: toast.TYPE.SUCCESS })
+          // await dispatch(GetBillAction({email:rootState.customer.email}))
+          navigate('/billdetail')
+          // navigate('/billdetail', { state: { responseData: response.data.billl, data: data } });
 
+        })
+        .catch((err) => {
+          console.log(err.message);
+          toast("Có lỗi xảy ra khi tạo đơn đặt phòng của bạn", {
+            type: toast.TYPE.ERROR,
+          });
+        });
+    }
+  }, [isConfirmed]);
 
   /* Query data from BE */
   const [data, setData] = useState([]);
@@ -83,6 +124,19 @@ function Detail() {
     };
     fetchData();
   }, []);
+  useEffect(() => {
+    console.log({ userId: localStorage.getItem('UserId'), id })
+    dispatch(getRatingAction({ userId: localStorage.getItem('UserId'), id }))
+   
+});
+useEffect(() => {
+  if(localStorage.getItem('AccessToken')){
+      dispatch(getMeAction())
+  }
+},[])
+useEffect(() => {
+  dispatch(getCommentAction({id}))
+},[]);
 
   /* State for display total price user have to pay */
   const [servicePrice, setServicePrice] = useState();
@@ -124,17 +178,9 @@ function Detail() {
     serviceRate = 0;
   }
 
-  const x4cmt = [...Array(4)].map((e, i) => (
-    <div className="pr-24">
-      {data.rates && data.rates.length
-        ? data.rates.map((item) => <FeedbacK detail={item} />)
-        : null}
-    </div>
-  ));
-
   return (
     <div>
-      <Header />
+      <Header className="bg-gray-100"/>
       <div>
         {data.services ? (
           <BookFormModal
@@ -152,12 +198,12 @@ function Detail() {
           state={false}
         />
       </div>
-
       <PictureContainer _id={id} pictureList={pictureList} />
 
       <div className=" max-w-2/3 mx-auto ">
         <div className="grid grid-cols-5 mt-10 border-b border-gray-300">
           <div className="col-start-1 col-end-4">
+            
             <Description
               detail={data}
               className="border-b-2 border-gray-300 pb-8"
@@ -216,7 +262,7 @@ function Detail() {
           </div>
 
           <div className="col-start-4 col-span-2 my-8 ml-10">
-          <BookingCard
+            <BookingCard
               rootProps={[rootState, setRootState]}
               formProp={[isBookingFormOpen, setIsBookingFormOpen]}
               homestayPrice={data.price}
@@ -241,11 +287,8 @@ function Detail() {
             valueRate={valueRate}
             serviceRate={serviceRate}
             accuracyRate={accuracyRate}
-          />
-           <div className="grid grid-cols-2">{x4cmt}</div>
+          /> 
           <p className="flex flex-row text-2xl font-bold ml-3 mt-4"> Rating </p>
-
-
           <div className="grid grid-cols-2 mt-2">
             <Rating id={data.id} msg={'cleanRate'} />
             <Rating id={data.id} msg={'serviceRate'} />
@@ -253,8 +296,9 @@ function Detail() {
             <Rating id={data.id} msg={'accuracyRate'} />
           </div>
 
-
-          <div className="grid grid-cols-2">{x4cmt}</div>
+          <p className="flex flex-row text-2xl font-bold ml-3 mt-4"> Comment </p>
+          <div className="grid grid-cols-2">{commentt?.map((item) => <Feedback detail={item} />)}</div>
+          <Comment id={id}/>
         </div>
       </div>
       <Footer />

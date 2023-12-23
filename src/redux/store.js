@@ -3,7 +3,7 @@ import { filterReducer, homestayIdReducer, guestNumberReducer, dayReducer } from
 import thunk from 'redux-thunk';
 import authReducer from "./authSlice";
 import billReducer from './billSlice';
-
+import detailReducer from './authSlice'
 const rootReducer = combineReducers({
   filterReducer,
   homestayIdReducer,
@@ -11,6 +11,7 @@ const rootReducer = combineReducers({
   dayReducer,
   authen: authReducer,
   bill:billReducer,
+  detail:detailReducer,
 });
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

@@ -1,15 +1,35 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from "react-redux";
-import { selectIsLogin } from "../../../redux/authSlice";
+import { selectIsLogin, selectUserData } from "../../../redux/authSlice";
 import { toast } from "react-toastify";
+import { ratingProductAction, selectDetail } from "../../../redux/detailSlice";
+import axios from "axios";
 
-const Rate = ({ count, rating, color, onRating, id,msg }) => {
-    const isLogin=useSelector(selectIsLogin)
-    const dispatch = useDispatch();
+const Rate = ({ count, rating, color, onRating, id, msg, ratedata }) => {
     const [hoverRating, setHoverRating] = useState(0);
+  const ratee = useSelector(selectDetail);
+  console.log(ratee)
+  const dispatch = useDispatch();
+  const isLogin = useSelector(selectIsLogin)
+  const data = useSelector(selectUserData)
+  useEffect(() => {
+    const getRatesByMsg = (rates, msg) => {
+      if (rates && rates.hasOwnProperty(msg)) {
+        return rates[msg];
+      }
+      return 0;
+    };
+
+    const rateValue = getRatesByMsg(ratee, msg);
     
+    setHoverRating(rateValue);
+    rateValueRef.current = rateValue;
+    console.log(rateValue)
+  }, [ratee, msg]);
+  const rateValueRef = useRef(0);
+
     const getColor = (index) => {
         if (hoverRating >= index) {
             return color.filled;
@@ -20,16 +40,24 @@ const Rate = ({ count, rating, color, onRating, id,msg }) => {
         return color.unfilled;
     };
     const handleRating = (idx) => {
+        console.log(idx)
         onRating(idx)
-        console.log(idx,msg)
-    //     if(!isLogin){
-    //         toast("Vui lòng đăng nhập để rating", { type: toast.TYPE.ERROR });
-    //     }
-    //    else {
-    //     onRating(idx)
-    //     console.log(idx)
-    //    }
-        // dispatch(ratingProductAction({rating:idx,id:id}))
+        if (!isLogin) {
+            toast("Vui lòng đăng nhập để rating", { type: toast.TYPE.ERROR });
+        }
+        else {
+            onRating(idx)
+            console.log(idx)
+        }
+        const Params = {
+            id: id,
+            rate: {
+                [msg]: idx,
+                user: data.userId
+            }
+        }
+        console.log(Params)
+        dispatch(ratingProductAction(Params))
     }
     const starRating = useMemo(() => {
         return Array(count)
@@ -43,7 +71,7 @@ const Rate = ({ count, rating, color, onRating, id,msg }) => {
                     onClick={() => handleRating(idx)}
                     style={{ color: getColor(idx) }}
                     onMouseEnter={() => setHoverRating(idx)}
-                    onMouseLeave={() => setHoverRating(0)}
+                    onMouseLeave={() => setHoverRating(rateValueRef.current)}
                 />
             ));
     }, [count, rating, hoverRating]);
