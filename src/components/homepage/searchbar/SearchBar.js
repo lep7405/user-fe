@@ -6,6 +6,8 @@ import PlaceInput from "./PlaceInput";
 import DatetimeInput from "./DatetimeInput";
 import CustomerInput from "./CustomerInput";
 import {Link} from "react-router-dom"
+import Dattt from "./Dattt";
+
 
 const defaultData = {
   place: "",
@@ -51,9 +53,10 @@ function SearchBar() {
         onClick={() => setIsOpen(false)}
       >
         <IntroTitle />
-        <div className="relative flex bg-white rounded-full">
+        <div className="relative flex bg-white rounded-full gap-x-5 justify-between">
           <PlaceInput dataProps={[data, setData]} />
           <DatetimeInput dataProps={[data, setData]} />
+          <Dattt dataProps={[data, setData]} />
           <CustomerInput
             dataProps={[data, setData]}
             openProps={[isOpen, setIsOpen]}
@@ -72,3 +75,5 @@ function SearchBar() {
 }
 
 export default SearchBar;
+
+

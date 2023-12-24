@@ -11,6 +11,7 @@ const Menu = ({ id ,setOpenProps}) => {
     const handleLogout = () => {       
         setOpen(false)
         dispatch(logOutAction({ _id: id }))
+        navigate('/')
     }
     const handle = () => {       
         setOpen(false)

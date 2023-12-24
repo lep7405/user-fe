@@ -15,7 +15,7 @@ function DatetimeInput(props) {
 
     setData((prevData) => ({
       ...prevData,
-      from: {
+      to: {
         day,
         month,
         year,
@@ -29,25 +29,25 @@ function DatetimeInput(props) {
     setShowDatePicker(!showDatePicker); 
     setHidden("")
     // Hiển thị DatePicker khi nhấn vào nút "Nhận phòng"
-  };
-  const maxDate = data.to // Sử dụng giá trị `to` từ `data` làm minDate
-  ? new Date(data.to.year, data.to.month - 1, data.to.day - 1)
-  : null;
+  }; 
+  const minDate = data.from // Sử dụng giá trị `to` từ `data` làm minDate
+  ? new Date(data.from.year, data.from.month - 1, data.from.day + 1)
+  : new Date();
+
   return (
     <>
       <div className="flex h-full flex-col justify-center items-center">
-        <button onClick={handleButtonClick} className="font-bold text-1xl">Ngày nhận phòng</button>
+        <button onClick={handleButtonClick} className="font-bold ">Ngày trả phòng</button>
         {/* <h1>{selectedDate ? selectedDate.toDateString() : ""}</h1> */}
-      
+       
           <DatePicker
             selected={selectedDate}
             onChange={handleDateChange}
             onFocus={() => setFromFocus(true)}
             onBlur={() => setFromFocus(false)}
             className={`bg-white-500 text-center`}
-            maxDate={maxDate}
-            minDate={new Date()}
-            placeholderText="Nhận"
+            minDate={minDate}
+            placeholderText="Trả"
           />
       </div>
     </>
