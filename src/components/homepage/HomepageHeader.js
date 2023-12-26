@@ -22,7 +22,7 @@ function HomepageHeader() {
             <div className="relative w-full bg-homepage-background bg-cover bg-no-repeat">
                 <nav className="w-full absolute top-2 left-20">
                     <div className="py-2 mx-auto flex items-center justify-between max-w-3/4 md:max-w-5/6 w-ful relative">
-                        <img className="h-30 w-auto sm:h-20" src={logo} alt="Logo" />
+                        <img className="h-48 w-auto" src={logo} alt="Logo" />
                         <div className="flex ml-32">
                             {
                                 isLogin ? (
